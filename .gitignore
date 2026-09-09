@@ -1,6 +1,11 @@
-node_modules/
-android/build/
-android/.gradle/
-ios/build/
+yarn.lock
+node_modules
 .DS_Store
-*.log
+npm-debug.log
+/coverage
+/lib
+/tsconfig.tsbuildinfo
+.claude
+android/build
+android/.gradle
+ios/build
