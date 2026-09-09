@@ -24,9 +24,8 @@
  * @packageDocumentation
  */
 import { PermissionsAndroid, Platform } from "react-native";
-
-import NativeGeofence from "./NativePerdiemGeofence";
 import type { NativeRegion } from "./NativePerdiemGeofence";
+import NativeGeofence from "./NativePerdiemGeofence";
 
 /**
  * Location permission as the operating system reports it.
@@ -34,75 +33,58 @@ import type { NativeRegion } from "./NativePerdiemGeofence";
  * Only `'always'` fires with the app closed. `'whenInUse'` covers the app
  * being open, and `'notDetermined'` means the user has not been asked yet.
  */
-export type GeofencePermission =
-  | "always"
-  | "whenInUse"
-  | "denied"
-  | "restricted"
-  | "notDetermined";
+export type GeofencePermission = "always" | "whenInUse" | "denied" | "restricted" | "notDetermined";
 
 /** What the operating system shows when the device arrives at a region. */
 export type GeofenceNotification = {
-  /** Notification title, shown exactly as given. */
-  title: string;
-  /** Notification body, shown exactly as given. */
-  body: string;
+	/** Notification title, shown exactly as given. */
+	title: string;
+	/** Notification body, shown exactly as given. */
+	body: string;
 };
 
 /** A circular area to watch, and what to show on arrival. */
 export type GeofenceRegion = {
-  /** Your identifier for the place. Echoed back in every {@link GeofenceEvent}. */
-  id: string;
-  /** Centre latitude in decimal degrees. */
-  latitude: number;
-  /** Centre longitude in decimal degrees. */
-  longitude: number;
-  /**
-   * Radius in metres. Values under 100 are raised to 100, the floor below
-   * which consumer GPS cannot detect an arrival reliably.
-   */
-  radius: number;
-  /**
-   * Shown on arrival. The strings are displayed verbatim, so substitute any
-   * placeholders before passing them.
-   */
-  notification: GeofenceNotification;
+	/** Your identifier for the place. Echoed back in every {@link GeofenceEvent}. */
+	id: string;
+	/** Centre latitude in decimal degrees. */
+	latitude: number;
+	/** Centre longitude in decimal degrees. */
+	longitude: number;
+	/**
+	 * Radius in metres. Values under 100 are raised to 100, the floor below
+	 * which consumer GPS cannot detect an arrival reliably.
+	 */
+	radius: number;
+	/**
+	 * Shown on arrival. The strings are displayed verbatim, so substitute any
+	 * placeholders before passing them.
+	 */
+	notification: GeofenceNotification;
 };
 
 /** An arrival the operating system showed a notification for. */
 export type GeofenceEvent = {
-  /** The `id` of the {@link GeofenceRegion} that was entered. */
-  id: string;
-  /** When the arrival was detected, as an ISO-8601 timestamp in UTC. */
-  enteredAt: string;
+	/** The `id` of the {@link GeofenceRegion} that was entered. */
+	id: string;
+	/** When the arrival was detected, as an ISO-8601 timestamp in UTC. */
+	enteredAt: string;
 };
 
-const PERMISSIONS: readonly GeofencePermission[] = [
-  "always",
-  "whenInUse",
-  "denied",
-  "restricted",
-  "notDetermined",
-];
+const PERMISSIONS: readonly GeofencePermission[] = ["always", "whenInUse", "denied", "restricted", "notDetermined"];
 
 const toPermission = (value: unknown): GeofencePermission =>
-  PERMISSIONS.find((permission) => permission === value) ?? "restricted";
+	PERMISSIONS.find((permission) => permission === value) ?? "restricted";
 
 const ANDROID_GRANTED = PermissionsAndroid.RESULTS.GRANTED;
 
-const toNative = ({
-  id,
-  latitude,
-  longitude,
-  radius,
-  notification,
-}: GeofenceRegion): NativeRegion => ({
-  id,
-  latitude,
-  longitude,
-  radius,
-  title: notification.title,
-  body: notification.body,
+const toNative = ({ id, latitude, longitude, radius, notification }: GeofenceRegion): NativeRegion => ({
+	id,
+	latitude,
+	longitude,
+	radius,
+	title: notification.title,
+	body: notification.body,
 });
 
 /**
@@ -114,8 +96,7 @@ const toNative = ({
  * @returns `true` when regions can be registered on this device, `false`
  *   otherwise or on any error.
  */
-export const isSupported = (): Promise<boolean> =>
-  NativeGeofence.isSupported().catch(() => false);
+export const isSupported = (): Promise<boolean> => NativeGeofence.isSupported().catch(() => false);
 
 /**
  * Reads the current location permission without prompting.
@@ -124,9 +105,9 @@ export const isSupported = (): Promise<boolean> =>
  *   any error.
  */
 export const getPermission = (): Promise<GeofencePermission> =>
-  NativeGeofence.getPermission()
-    .then(toPermission)
-    .catch(() => "restricted");
+	NativeGeofence.getPermission()
+		.then(toPermission)
+		.catch(() => "restricted");
 
 /**
  * Requests the location permission monitoring needs, in the order each
@@ -143,34 +124,30 @@ export const getPermission = (): Promise<GeofencePermission> =>
  *   the app closed.
  */
 export const requestPermission = async (): Promise<GeofencePermission> => {
-  if (Platform.OS !== "android") {
-    return NativeGeofence.requestPermission()
-      .then(toPermission)
-      .catch(() => "restricted");
-  }
+	if (Platform.OS !== "android") {
+		return NativeGeofence.requestPermission()
+			.then(toPermission)
+			.catch(() => "restricted");
+	}
 
-  if (Number(Platform.Version) >= 33) {
-    await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-    ).catch(() => null);
-  }
+	if (Number(Platform.Version) >= 33) {
+		await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).catch(() => null);
+	}
 
-  const fine = await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  ).catch(() => null);
+	const fine = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).catch(() => null);
 
-  if (fine !== ANDROID_GRANTED) {
-    return "denied";
-  }
-  if (Number(Platform.Version) < 29) {
-    return "always";
-  }
+	if (fine !== ANDROID_GRANTED) {
+		return "denied";
+	}
+	if (Number(Platform.Version) < 29) {
+		return "always";
+	}
 
-  const background = await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-  ).catch(() => null);
+	const background = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION).catch(
+		() => null,
+	);
 
-  return background === ANDROID_GRANTED ? "always" : "whenInUse";
+	return background === ANDROID_GRANTED ? "always" : "whenInUse";
 };
 
 /**
@@ -204,7 +181,7 @@ export const requestPermission = async (): Promise<GeofencePermission> => {
  * ```
  */
 export const setRegions = (regions: GeofenceRegion[]): Promise<string[]> =>
-  NativeGeofence.setRegions(regions.map(toNative)).catch(() => []);
+	NativeGeofence.setRegions(regions.map(toNative)).catch(() => []);
 
 /**
  * Stops monitoring every region this library registered.
@@ -213,8 +190,7 @@ export const setRegions = (regions: GeofenceRegion[]): Promise<string[]> =>
  *
  * @returns `true` once monitoring has stopped, `false` on any error.
  */
-export const clearRegions = (): Promise<boolean> =>
-  NativeGeofence.clearRegions().catch(() => false);
+export const clearRegions = (): Promise<boolean> => NativeGeofence.clearRegions().catch(() => false);
 
 /**
  * Reads the arrivals the operating system showed a notification for since
@@ -226,8 +202,7 @@ export const clearRegions = (): Promise<boolean> =>
  * @returns The arrivals in the order they happened, oldest first. Empty on
  *   any error.
  */
-export const getEvents = (): Promise<GeofenceEvent[]> =>
-  NativeGeofence.getEvents().catch(() => []);
+export const getEvents = (): Promise<GeofenceEvent[]> => NativeGeofence.getEvents().catch(() => []);
 
 /**
  * Drops the oldest arrivals from the log.
@@ -239,6 +214,5 @@ export const getEvents = (): Promise<GeofenceEvent[]> =>
  *   them.
  * @returns `true` once the log has been trimmed, `false` on any error.
  */
-export const clearEvents = (
-  count: number = Number.MAX_SAFE_INTEGER,
-): Promise<boolean> => NativeGeofence.clearEvents(count).catch(() => false);
+export const clearEvents = (count: number = Number.MAX_SAFE_INTEGER): Promise<boolean> =>
+	NativeGeofence.clearEvents(count).catch(() => false);
