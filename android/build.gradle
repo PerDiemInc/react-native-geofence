@@ -1,0 +1,37 @@
+buildscript {
+  repositories { google(); mavenCentral() }
+  dependencies { classpath "com.android.tools.build:gradle:8.7.2" }
+}
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "com.facebook.react"
+
+def safeExt(name, fallback) {
+  rootProject.ext.has(name) ? rootProject.ext.get(name) : fallback
+}
+
+android {
+  namespace "com.perdiem.geofence"
+  compileSdk safeExt("compileSdkVersion", 35)
+
+  defaultConfig {
+    minSdk safeExt("minSdkVersion", 24)
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+
+  kotlinOptions {
+    jvmTarget = "17"
+  }
+}
+
+repositories { google(); mavenCentral() }
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+  implementation "com.google.android.gms:play-services-location:21.3.0"
+}

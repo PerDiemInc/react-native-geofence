@@ -1,0 +1,32 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!--
+    Merged into the host app, so consuming this library needs no manifest edits.
+    ACCESS_BACKGROUND_LOCATION is what lets a fence fire once the app is closed;
+    it is granted as "Allow all the time" and only after foreground location.
+  -->
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+  <application>
+    <receiver
+      android:name=".GeofenceBroadcastReceiver"
+      android:exported="false" />
+
+    <!--
+      Play Services keeps registered fences in GmsCore process state, not on
+      disk, so a reboot or an update drops every one. This re-arms from disk.
+    -->
+    <receiver
+      android:name=".GeofenceBootReceiver"
+      android:exported="true"
+      android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+      </intent-filter>
+    </receiver>
+  </application>
+</manifest>

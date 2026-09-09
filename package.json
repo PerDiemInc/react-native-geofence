@@ -1,0 +1,48 @@
+{
+  "name": "@perdieminc/react-native-geofence",
+  "version": "1.0.0",
+  "description": "Register places with a notification. The OS watches them and shows the notification when the device arrives, even with the app closed.",
+  "license": "MIT",
+  "author": "Per Diem",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PerDiemInc/react-native-geofence.git"
+  },
+  "homepage": "https://github.com/PerDiemInc/react-native-geofence#readme",
+  "bugs": "https://github.com/PerDiemInc/react-native-geofence/issues",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src",
+    "ios",
+    "android",
+    "perdiem-react-native-geofence.podspec",
+    "!android/build",
+    "!**/.DS_Store"
+  ],
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "geofence",
+    "geofencing",
+    "region-monitoring",
+    "local-notification",
+    "turbomodule"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "codegenConfig": {
+    "name": "RNPerdiemGeofence",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.perdiem.geofence"
+    }
+  }
+}
