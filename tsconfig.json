@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
 		"target": "ES2020",
-		"module": "commonjs",
+		"module": "node16",
+		"moduleResolution": "node16",
 		"lib": ["ES2020"],
 		"declaration": true,
 		"outDir": "./lib",
@@ -10,8 +11,7 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"moduleResolution": "node"
+		"resolveJsonModule": true
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules", "lib", "test"]
